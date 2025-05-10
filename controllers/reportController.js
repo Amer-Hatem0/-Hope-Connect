@@ -1,11 +1,17 @@
+ 
+
 const db = require('../config/db.config');
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
+const logger = require('../utils/logger');
 
-// 🔹 توليد تقرير PDF للتبرعات
+ 
 exports.getDonationReportPdf = (req, res) => {
   db.query('SELECT * FROM donations', (err, donations) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) {
+      logger.error('Error generating donation PDF report:', err);
+      return res.status(500).json({ error: err });
+    }
 
     const doc = new PDFDocument();
     res.setHeader('Content-Type', 'application/pdf');
@@ -21,14 +27,18 @@ exports.getDonationReportPdf = (req, res) => {
         .text(`ID: ${donation.id} | Amount: $${donation.amount} | Category: ${donation.category} | Date: ${donation.donation_date}`);
     });
 
+    logger.info('Donation PDF report generated');
     doc.end();
   });
 };
 
-// 🔹 توليد تقرير Excel للأيتام
+ 
 exports.getOrphanReportExcel = (req, res) => {
   db.query('SELECT * FROM orphans', async (err, orphans) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) {
+      logger.error('Error generating orphan Excel report:', err);
+      return res.status(500).json({ error: err });
+    }
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Orphans');
@@ -51,5 +61,6 @@ exports.getOrphanReportExcel = (req, res) => {
 
     await workbook.xlsx.write(res);
     res.end();
+    logger.info('Orphan Excel report generated');
   });
 };

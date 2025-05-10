@@ -1,27 +1,28 @@
 const nodemailer = require('nodemailer');
+require('dotenv').config();
 
  
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'kellie.strosin99@ethereal.email',          
-    pass: '7s4mJK6Mq2V54wEp1x'        
+    user: process.env.EMAIL_USER,  
+    pass: process.env.EMAIL_PASS   
   }
 });
 
  
-exports.sendEmail = async (to, subject, message) => {
+exports.sendEmail = async (to, subject, text) => {
   const mailOptions = {
-    from: '"HopeConnect" <amer23102002@gmail.com>',
+    from: process.env.EMAIL_USER,
     to,
     subject,
-    text: message
+    text
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully');
+    console.log('  Email sent to:', to);
   } catch (err) {
-    console.error(' Failed to send email:', err);
+    console.error('  Failed to send email:', err.message);
   }
 };

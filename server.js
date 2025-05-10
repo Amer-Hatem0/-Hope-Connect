@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const swaggerDocs = require('./swagger');
- 
+ require('dotenv').config();
+
 
 
 const orphanRoutes = require('./routes/orphanRoutes');
@@ -14,6 +15,11 @@ const serviceRequestRoutes = require('./routes/serviceRequestRoutes');
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+const orphanUpdateRoutes = require('./routes/orphanUpdateRoutes');
+const impactRoutes = require('./routes/impactReportRoutes');
+const externalApiRoutes = require('./routes/externalApiRoutes');
+
 
 
 
@@ -34,6 +40,13 @@ app.use('/api/service-requests', serviceRequestRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/orphan-updates', orphanUpdateRoutes);
+app.use('/api/impact', impactRoutes);
+app.use('/api/external', externalApiRoutes);
+
+
+
 
 swaggerDocs(app);
 
