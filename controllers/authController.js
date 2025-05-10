@@ -1,50 +1,40 @@
-// ✅ controllers/authController.js (باستخدام mysql2 + winston logging)
+ 
 
 const db = require('../config/db.config');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 
-// 📌 تسجيل مستخدم جديد
+ 
 exports.register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
 
   try {
-    db.query('SELECT * FROM users WHERE email = ?', [email], async (err, results) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+  
+    const newUser = {
+      name,
+      email,
+      password: hashedPassword,
+      role: 'user',
+    };
+
+    db.query('INSERT INTO users SET ?', newUser, (err, result) => {
       if (err) {
-        logger.error('Database error during registration:', err);
-        return res.status(500).json({ error: err });
+        console.error("Error inserting new user:", err);
+        return res.status(500).json({ error: 'Registration failed. Try again.' });
       }
 
-      if (results.length > 0) {
-        logger.warn(`Registration attempt with existing email: ${email}`);
-        return res.status(400).json({ message: 'Email already in use' });
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = { name, email, password: hashedPassword, role };
-
-      db.query('INSERT INTO users SET ?', user, (err, result) => {
-        if (err) {
-          logger.error('Error inserting new user:', err);
-          return res.status(500).json({ error: err });
-        }
-
-        logger.info(`New user registered: ${email} with role: ${role}`);
-        res.status(201).json({
-          message: 'User registered successfully',
-          userId: result.insertId,
-          role: role
-        });
-      });
+      res.status(201).json({ message: 'User registered successfully', id: result.insertId });
     });
+
   } catch (err) {
-    logger.error('Unhandled error in register:', err);
     res.status(500).json({ error: err.message });
   }
 };
 
-// 📌 تسجيل الدخول
+ 
 exports.login = (req, res) => {
   const { email, password } = req.body;
 

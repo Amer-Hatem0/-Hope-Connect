@@ -1,3 +1,6 @@
+const db = require('../config/db.config');
+
+
 exports.getAllDonors = (req, res) => {
   db.query('SELECT * FROM donors', (err, results) => {
     if (err) {
