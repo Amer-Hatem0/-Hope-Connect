@@ -8,8 +8,7 @@ router.get('/', donationController.getAllDonations);
 
 router.post(
   '/',
-  authMiddleware,
-  multiRoleMiddleware(['admin', 'donor']),
+  
   donationController.createDonation
 );
 

@@ -10,5 +10,7 @@ router.get('/top-donors', authMiddleware, roleMiddleware('admin'), impactControl
 router.get('/successful-campaigns', authMiddleware, roleMiddleware('admin'), impactController.getSuccessfulCampaigns);
 router.get('/most-supported-orphans', authMiddleware, roleMiddleware('admin'), impactController.getMostSupportedOrphans);
 router.get('/top-volunteers', authMiddleware, roleMiddleware('admin'), impactController.getTopVolunteers);
+router.get('/pdf', impactController.generateImpactReportPdf);
+
 
 module.exports = router;

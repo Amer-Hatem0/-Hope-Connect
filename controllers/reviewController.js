@@ -3,7 +3,13 @@ const logger = require('../utils/logger');
 
 // Get all reviews
 exports.getAllReviews = (req, res) => {
-  db.query('SELECT * FROM reviews', (err, results) => {
+  const sql = `
+    SELECT reviews.*, donors.name AS donor_name
+    FROM reviews
+    JOIN donors ON reviews.donor_id = donors.id
+  `;
+
+  db.query(sql, (err, results) => {
     if (err) {
       logger.error('Error fetching reviews:', err);
       return res.status(500).json({ error: err });

@@ -8,6 +8,7 @@ const { multiRoleMiddleware } = require('../middleware/roleMiddleware');
 router.get('/', reviewController.getAllReviews);
 
  
-router.post('/', authMiddleware, multiRoleMiddleware(['donor']), reviewController.createReview);
+// router.post('/', authMiddleware, multiRoleMiddleware(['admin']), reviewController.createReview);
+router.post('/',  reviewController.createReview);
 
 module.exports = router;
