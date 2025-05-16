@@ -74,3 +74,25 @@ exports.deleteDonor = (req, res) => {
     res.status(200).json({ message: 'Donor deleted successfully' });
   });
 };
+
+
+exports.verifyDonor = (req, res) => {
+  const donorId = req.params.id;
+  const sql = `UPDATE donors SET is_verified = TRUE WHERE id = ?`;
+
+  db.query(sql, [donorId], (err, result) => {
+    if (err) return res.status(500).json({ error: "Verification failed" });
+    res.status(200).json({ message: "Donor verified successfully" });
+  });
+};
+
+exports.updateLocation = (req, res) => {
+  const { id } = req.params;
+  const { location } = req.body;
+
+  const sql = `UPDATE donors SET location = ? WHERE id = ?`;
+  db.query(sql, [location, id], (err) => {
+    if (err) return res.status(500).json({ error: "Location update failed" });
+    res.json({ message: "Location updated" });
+  });
+};

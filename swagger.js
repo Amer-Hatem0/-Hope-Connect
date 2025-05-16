@@ -15,7 +15,7 @@ const options = {
       }
     ]
   },
-  apis: ['./routes/*.js', './swagger-documentation.js'] // ← حدد جميع ملفات التعليقات
+  apis: ['./routes/*.js', './swagger-documentation.js']  
 };
 
 const swaggerSpec = swaggerJsDoc(options);

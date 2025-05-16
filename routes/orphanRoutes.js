@@ -10,7 +10,9 @@ const { roleMiddleware } = require('../middleware/roleMiddleware');
 router.post('/', authMiddleware, roleMiddleware('admin'), orphanController.createOrphan);
 router.get('/', orphanController.getAllOrphans);
 router.get('/:id', orphanController.getOrphanById);
- 
+ router.put('/:id/verify', authMiddleware, roleMiddleware('admin'), orphanController.verifyOrphan);
+router.put('/orphans/:id/location', authMiddleware, orphanController.updateLocation);
+
 router.put('/:id', orphanController.updateOrphan);
 router.delete('/:id', orphanController.deleteOrphan);
 

@@ -123,3 +123,25 @@ exports.deleteOrphan = (req, res) => {
     res.status(200).json({ message: 'The orphan has been successfully removed.' });
   });
 };
+
+
+exports.verifyOrphan = (req, res) => {
+  const orphanId = req.params.id;
+  const sql = `UPDATE orphans SET is_verified = TRUE WHERE id = ?`;
+
+  db.query(sql, [orphanId], (err, result) => {
+    if (err) return res.status(500).json({ error: "Verification failed" });
+    res.status(200).json({ message: "Orphan verified successfully" });
+  });
+};
+
+exports.updateLocation = (req, res) => {
+  const { id } = req.params;
+  const { location } = req.body;
+
+  const sql = `UPDATE orphans SET location = ? WHERE id = ?`;
+  db.query(sql, [location, id], (err) => {
+    if (err) return res.status(500).json({ error: "Location update failed" });
+    res.json({ message: "Location updated" });
+  });
+};

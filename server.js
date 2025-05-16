@@ -19,6 +19,15 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const orphanUpdateRoutes = require('./routes/orphanUpdateRoutes');
 const impactRoutes = require('./routes/impactReportRoutes');
 const externalApiRoutes = require('./routes/externalApiRoutes');
+const sponsorshipRoutes = require('./routes/sponsorshipRoutes');
+const transparencyRoutes = require('./routes/transparencyRoutes');
+const ratingsRoutes = require('./routes/ratings');
+const logisticsRoutes = require('./routes/logisticsRoutes');
+const pickupRoutes = require('./routes/pickupRoutes');
+const partnersRoutes = require('./routes/partnersRoutes');
+
+
+
 
 
 
@@ -44,6 +53,16 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/orphan-updates', orphanUpdateRoutes);
 app.use('/api/impact', impactRoutes);
 app.use('/api/external', externalApiRoutes);
+app.use('/api/sponsorships', sponsorshipRoutes);
+app.use('/api/emergency-donations', require('./routes/emergencyDonationRoutes'));
+app.use('/api/transparency', transparencyRoutes);
+app.use('/api/ratings', ratingsRoutes);
+app.use('/api/logistics', logisticsRoutes);
+app.use('/api/logistics', pickupRoutes);
+app.use('/api/partners', partnersRoutes);
+app.use('/api/notifications', require('./routes/notificationRoutes'));
+
+
 
 
 

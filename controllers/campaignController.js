@@ -1,5 +1,4 @@
-// ✅ controllers/campaignController.js (مع logging باستخدام winston)
-
+ 
 const db = require('../config/db.config');
 const logger = require('../utils/logger');
 
@@ -15,39 +14,75 @@ exports.getAllCampaigns = (req, res) => {
 };
 
 // Create campaign
-exports.createCampaign = (req, res) => {
-  const campaign = req.body;
+const { sendEmail } = require('../services/emailService');
 
-  db.query('INSERT INTO campaigns SET ?', campaign, (err, result) => {
+exports.createCampaign = async (req, res) => {
+  const { name, description, goal_amount, collected_amount, status } = req.body;
+
+  const sql = `
+    INSERT INTO campaigns (name, description, goal_amount, collected_amount, status)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  db.query(sql, [name, description, goal_amount, collected_amount || 0, status || 'active'], async (err, result) => {
     if (err) {
-      logger.error('Error creating campaign:', err);
-      return res.status(500).json({ error: err });
+      console.error("Error creating campaign:", err);
+      return res.status(500).json({ error: 'Database error' });
     }
 
-    logger.info(`Campaign created: ${campaign.name}`);
+   
+    if (status === 'emergency') {
+      try {
+        await sendEmail(
+          "amerhatem01@gmail.com",  
+          "🚨 Emergency Campaign Created",
+          `A new emergency campaign "${name}" was created.\n\nPlease consider urgent support.`
+        );
+      } catch (e) {
+        console.error("Email error:", e);
+      }
+    }
+
     res.status(201).json({ message: 'Campaign created successfully', id: result.insertId });
   });
 };
 
+
 // Update campaign
+
+
 exports.updateCampaign = (req, res) => {
   const { id } = req.params;
-  const updated = req.body;
+  const { name, description, goal_amount, collected_amount, status } = req.body;
 
-  db.query('UPDATE campaigns SET ? WHERE id = ?', [updated, id], (err, result) => {
+  const sql = `
+    UPDATE campaigns
+    SET name = ?, description = ?, goal_amount = ?, collected_amount = ?, status = ?
+    WHERE id = ?
+  `;
+
+  db.query(sql, [name, description, goal_amount, collected_amount, status, id], async (err, result) => {
     if (err) {
-      logger.error(`Error updating campaign ID ${id}:`, err);
-      return res.status(500).json({ error: err });
+      console.error("Update error:", err);
+      return res.status(500).json({ error: "Database update failed" });
     }
-    if (result.affectedRows === 0) {
-      logger.warn(`Attempt to update non-existent campaign ID: ${id}`);
-      return res.status(404).json({ message: 'Campaign not found' });
+ 
+    if (Number(collected_amount) >= Number(goal_amount)) {
+      try {
+        await sendEmail(
+          "amerhatem01@gmail.com",  
+          `Campaign Goal Reached: ${name}`,
+          `🎉 The campaign "${name}" has successfully reached its goal of $${goal_amount}.`
+        );
+      } catch (err) {
+        console.error("Failed to send campaign goal email:", err);
+      }
     }
 
-    logger.info(`Campaign updated successfully - ID: ${id}`);
-    res.status(200).json({ message: 'Campaign updated successfully' });
+    res.status(200).json({ message: "Campaign updated successfully" });
   });
 };
+
 
 // Delete campaign
 exports.deleteCampaign = (req, res) => {
