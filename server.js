@@ -81,7 +81,8 @@ app.use("/api/stripe", stripeRoutes);
 app.use('/api/orphan-reports', orphanReportRoutes);
 app.use('/uploads', express.static('uploads')); // serve static images
 
-
+// app.js or server.js
+ 
 
 swaggerDocs(app);
  

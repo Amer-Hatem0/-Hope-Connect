@@ -9,6 +9,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const { roleMiddleware } = require('../middleware/roleMiddleware');
 
 const upload = multer({ dest: 'uploads/' });
+router.get('/reports/:orphanId',   orphanController.getReportsByOrphan);
 
 router.get('/', orphanController.getAllOrphans);
 router.get('/:id', orphanController.getOrphanById);
