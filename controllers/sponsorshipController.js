@@ -52,3 +52,50 @@ exports.getSponsorships = (req, res) => {
     res.status(200).json(results);
   });
 };
+
+
+
+exports.getByDonor = (req, res) => {
+  const donorId = req.params.donorId;
+  const sql = `
+    SELECT s.*, o.name AS orphan_name
+    FROM sponsorships s
+    JOIN orphans o ON s.orphan_id = o.id
+    WHERE s.donor_id = ?
+  `;
+  db.query(sql, [donorId], (err, results) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    res.status(200).json(results);
+  });
+};
+
+
+ 
+
+// Get sponsorships by orphan ID
+exports.getSponsorshipsByOrphan = (req, res) => {
+  const { orphanId } = req.params;
+
+  const sql = `
+    SELECT 
+      s.id,
+      s.amount,
+      s.frequency,
+      s.start_date,
+      s.end_date,
+      s.status,
+      d.name AS donor_name
+    FROM sponsorships s
+    JOIN donors d ON s.donor_id = d.id
+    WHERE s.orphan_id = ?
+    ORDER BY s.start_date DESC
+  `;
+
+  db.query(sql, [orphanId], (err, results) => {
+    if (err) {
+      console.error("Error fetching sponsorships for orphan:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+    res.status(200).json(results);
+  });
+};

@@ -7,5 +7,5 @@ router.get('/:id', volunteerController.getVolunteerById);
 router.post('/', volunteerController.createVolunteer);
 router.put('/:id', volunteerController.updateVolunteer);
 router.delete('/:id', volunteerController.deleteVolunteer);
-
+router.get('/by-user/:userId', volunteerController.getvolunteersByUserId);
 module.exports = router;

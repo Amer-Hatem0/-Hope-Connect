@@ -12,3 +12,19 @@ exports.schedulePickup = (req, res) => {
     res.json({ message: "Pickup scheduled", id: result.insertId });
   });
 };
+
+
+exports.getAllScheduledPickups = (req, res) => {
+  const sql = `
+    SELECT pr.*, d.amount, c.name AS category_name, donors.name AS donor_name
+    FROM pickup_requests pr
+    JOIN donations d ON pr.donation_id = d.id
+    JOIN donation_categories c ON d.category_id = c.id
+    JOIN donors ON pr.donor_id = donors.id
+    ORDER BY pr.pickup_time DESC`;
+
+  db.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch pickups" });
+    res.status(200).json(results);
+  });
+};

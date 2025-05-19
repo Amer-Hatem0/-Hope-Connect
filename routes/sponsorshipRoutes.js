@@ -6,6 +6,8 @@ const { multiRoleMiddleware } = require('../middleware/roleMiddleware');
 
  
 router.get('/', authMiddleware, sponsorshipController.getSponsorships);
-router.post('/', authMiddleware, multiRoleMiddleware(['admin', 'user']), sponsorshipController.createSponsorship);
+router.post('/', authMiddleware, multiRoleMiddleware(['admin', 'user', 'donor']), sponsorshipController.createSponsorship);
+router.get('/by-orphan/:orphanId', sponsorshipController.getSponsorshipsByOrphan);  
 
+router.get('/by-donor/:donorId', sponsorshipController.getByDonor);
 module.exports = router;

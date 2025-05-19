@@ -1,5 +1,4 @@
-// ✅ controllers/volunteerController.js (مع logging)
-
+ 
 const db = require('../config/db.config');
 const logger = require('../utils/logger');
 
@@ -63,21 +62,42 @@ exports.updateVolunteer = (req, res) => {
     res.status(200).json({ message: 'Volunteer updated successfully' });
   });
 };
+// controller
+exports.getvolunteersByUserId = (req, res) => {
+  const userId = req.params.userId;
+  db.query("SELECT * FROM volunteers WHERE user_id = ?", [userId], (err, results) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    if (results.length === 0) return res.status(404).json({ message: "Donor not found" });
+    res.status(200).json(results[0]);
+  });
+};
 
 // Delete volunteer
 exports.deleteVolunteer = (req, res) => {
   const { id } = req.params;
 
-  db.query('DELETE FROM volunteers WHERE id = ?', [id], (err, result) => {
+   db.query('SELECT COUNT(*) AS count FROM orphan_volunteers WHERE volunteer_id = ?', [id], (err, results) => {
     if (err) {
-      logger.error(`Error deleting volunteer ID ${id}:`, err);
-      return res.status(500).json({ error: err });
+      console.error(`Error checking related orphan_volunteers for volunteer ID ${id}:`, err);
+      return res.status(500).json({ error: "Failed to check volunteer associations." });
     }
-    if (result.affectedRows === 0) {
-      logger.warn(`Attempt to delete non-existent volunteer ID: ${id}`);
-      return res.status(404).json({ message: 'Volunteer not found' });
+
+    if (results[0].count > 0) {
+      return res.status(400).json({ message: "Cannot delete volunteer assigned to orphans." });
     }
-    logger.info(`Volunteer deleted - ID: ${id}`);
-    res.status(200).json({ message: 'Volunteer deleted successfully' });
+
+  
+    db.query('DELETE FROM volunteers WHERE id = ?', [id], (err, result) => {
+      if (err) {
+        console.error(`Error deleting volunteer ID ${id}:`, err);
+        return res.status(500).json({ error: "Delete operation failed." });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'Volunteer not found.' });
+      }
+
+      res.status(200).json({ message: 'Volunteer deleted successfully.' });
+    });
   });
 };

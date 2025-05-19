@@ -30,3 +30,18 @@ exports.getEmergencyDonations = (req, res) => {
     res.status(200).json(results);
   });
 };
+
+
+exports.getEmergencyDonationsByDonor = (req, res) => {
+  const donorId = req.params.donorId;
+
+  const sql = `SELECT * FROM emergency_donations WHERE donor_id = ?`;
+  db.query(sql, [donorId], (err, results) => {
+    if (err) {
+      console.error("Error fetching emergency donations by donor:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    res.status(200).json(results);
+  });
+};

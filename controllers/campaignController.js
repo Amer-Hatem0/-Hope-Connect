@@ -102,3 +102,64 @@ exports.deleteCampaign = (req, res) => {
     res.status(200).json({ message: 'Campaign deleted successfully' });
   });
 };
+
+
+
+exports.donateToCampaign = (req, res) => {
+  const { id } = req.params;
+  const { amount } = req.body;
+
+  if (!amount || isNaN(amount) || amount <= 0) {
+    return res.status(400).json({ error: "Invalid donation amount" });
+  }
+
+  const sql = `
+    UPDATE campaigns
+    SET collected_amount = collected_amount + ?
+    WHERE id = ?
+  `;
+
+  db.query(sql, [amount, id], (err, result) => {
+    if (err) {
+      console.error("Donation failed:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+    res.status(200).json({ message: "Donation successful" });
+  });
+};
+
+ 
+
+// Volunteer joins campaign
+exports.volunteerJoinCampaign = (req, res) => {
+  const { volunteerId, campaignId } = req.body;
+  const sql = `INSERT INTO volunteer_campaigns (volunteer_id, campaign_id) VALUES (?, ?)`;
+  db.query(sql, [volunteerId, campaignId], (err) => {
+    if (err) return res.status(500).json({ error: "Join failed" });
+    res.status(200).json({ message: "Joined successfully" });
+  });
+};
+
+// Volunteer leaves campaign
+exports.volunteerLeaveCampaign = (req, res) => {
+  const { volunteerId, campaignId } = req.body;
+  const sql = `DELETE FROM volunteer_campaigns WHERE volunteer_id = ? AND campaign_id = ?`;
+  db.query(sql, [volunteerId, campaignId], (err) => {
+    if (err) return res.status(500).json({ error: "Leave failed" });
+    res.status(200).json({ message: "Left successfully" });
+  });
+};
+
+// Get all campaigns volunteered in
+exports.getCampaignsByVolunteer = (req, res) => {
+  const { volunteerId } = req.params;
+  const sql = `
+    SELECT c.* FROM campaigns c
+    JOIN volunteer_campaigns vc ON c.id = vc.campaign_id
+    WHERE vc.volunteer_id = ?
+  `;
+  db.query(sql, [volunteerId], (err, results) => {
+    if (err) return res.status(500).json({ error: "Error fetching campaigns" });
+    res.status(200).json(results);
+  });
+};

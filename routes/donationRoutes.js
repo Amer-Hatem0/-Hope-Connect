@@ -6,10 +6,7 @@ const { multiRoleMiddleware } = require('../middleware/roleMiddleware');
 
 router.get('/', donationController.getAllDonations);
 
-router.post(
-  '/',
-  
-  donationController.createDonation
-);
-
+router.post( '/',donationController.createDonation);
+ router.get('/with-pickup/:donorId', donationController.getDonationsWithPickupByDonor);
+router.get('/by-donor/:donorId', donationController.getDonationsByDonor);
 module.exports = router;

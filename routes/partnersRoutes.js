@@ -4,7 +4,7 @@ const controller = require('../controllers/partnersController');
 const authMiddleware = require('../middleware/authMiddleware');
 const { roleMiddleware } = require('../middleware/roleMiddleware');
 
-router.post('/', authMiddleware, roleMiddleware('admin'), controller.createPartner);
+router.post('/',  controller.createPartner);
 router.get('/', controller.getPartners);
 
 module.exports = router;

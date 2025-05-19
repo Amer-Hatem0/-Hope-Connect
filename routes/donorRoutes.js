@@ -7,9 +7,11 @@ const { roleMiddleware } = require('../middleware/roleMiddleware');
 router.get('/', donorController.getAllDonors);
 router.get('/:id', donorController.getDonorById);
 router.post('/', donorController.createDonor);
-router.put('/:id', donorController.updateDonor);
+router.patch('/:id', donorController.updateDonor);
 router.delete('/:id', donorController.deleteDonor);
 router.put('/:id/verify', authMiddleware, roleMiddleware('admin'), donorController.verifyDonor);
-router.put('/:id/location', authMiddleware, donorController.updateLocation);
+ router.get('/by-user/:userId', donorController.getDonorByUserId);
+
  
+
 module.exports = router;
