@@ -1,8 +1,0 @@
-id INT AUTO_INCREMENT PRIMARY KEY
-name VARCHAR(255)
-email VARCHAR(255) UNIQUE
-phone VARCHAR(15)
-skills TEXT
-availability VARCHAR(255)
-experience TEXT
-user_id INT

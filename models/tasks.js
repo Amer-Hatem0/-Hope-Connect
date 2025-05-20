@@ -1,7 +1,0 @@
-id INT AUTO_INCREMENT PRIMARY KEY
-title VARCHAR(255)
-description TEXT
-assigned_to INT
-status VARCHAR(50)
-created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-completed_at DATETIME
