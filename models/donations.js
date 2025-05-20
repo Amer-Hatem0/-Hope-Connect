@@ -1,0 +1,6 @@
+id INT AUTO_INCREMENT PRIMARY KEY
+donor_id INT
+amount DECIMAL(10,2)
+category_id INT
+donation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+platform_fee DECIMAL(10,2) DEFAULT 0
